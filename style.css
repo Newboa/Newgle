@@ -25,97 +25,184 @@ body {
   max-width: 800px;
   width: 100%;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-/* Titre */
-.title {
+/* Interface Utilisateur */
+#user-interface .title {
   font-size: 56px;
   font-weight: 700;
   color: #0078d7;
   margin-bottom: 40px;
-  text-align: center;
 }
 
-/* Barre de recherche */
-#searchBox {
-  width: 100%;
-  padding: 16px 20px;
-  font-size: 18px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  margin-bottom: 30px;
-}
-
-#searchBox:focus {
-  border-color: #0078d7;
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(0, 120, 215, 0.15);
-}
-
-/* Résultats */
-#results {
+/* Barre de recherche Google intégrée */
+.gcse-search {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Carte de résultat */
-.result {
-  background-color: #f4f8fc;
-  border-left: 6px solid #0078d7;
-  padding: 16px 20px;
-  border-radius: 8px;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.result:hover {
-  background: #eaf3fd;
-  transform: translateY(-2px);
-}
-
-.result a {
-  font-size: 20px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #0047ab;
-}
-
-.result a:hover {
-  text-decoration: underline;
-}
-
-.result p {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Message aucun résultat */
-.no-results {
-  text-align: center;
-  font-style: italic;
-  color: #c00;
-  font-size: 16px;
+  justify-content: center;
   margin-top: 20px;
 }
 
-/* Responsive mobile */
+.gcse-search input[type="text"] {
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  outline: none;
+  width: 100%;
+  max-width: 500px;
+}
+
+.gcse-search input[type="text"]:focus {
+  border-color: #0078d7;
+  box-shadow: 0 0 0 4px rgba(0, 120, 215, 0.15);
+}
+
+/* Interface Admin */
+#admin-interface {
+  margin-top: 40px;
+}
+
+#admin-interface.hidden {
+  display: none;
+}
+
+#admin-dashboard {
+  display: none;
+}
+
+#admin-dashboard.hidden {
+  display: none;
+}
+
+#admin-login-form input[type="password"] {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+#admin-login-form button {
+  padding: 12px 20px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#admin-login-form button:hover {
+  background-color: #005fa3;
+}
+
+/* Style du tableau de bord admin */
+#result-management {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.result {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+button.delete-btn {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button.delete-btn:hover {
+  background-color: #c9302c;
+}
+
+/* Formulaire d'ajout de résultat */
+#add-result-form {
+  background-color: #e9f5ff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+#add-result-form input[type="text"], #add-result-form input[type="url"] {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+#add-result-form button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#add-result-form button:hover {
+  background-color: #218838;
+}
+
+/* Mobile responsive */
 @media (max-width: 600px) {
   .title {
     font-size: 36px;
   }
 
-  #searchBox {
-    font-size: 16px;
-    padding: 14px;
+  .gcse-search input[type="text"] {
+    font-size: 14px;
+    padding: 12px;
   }
 
-  .result a {
-    font-size: 18px;
+  #admin-login-form input[type="password"] {
+    font-size: 14px;
+    padding: 10px;
   }
 
-  .result p {
-    font-size: 13px;
+  #add-result-form input[type="text"], #add-result-form input[type="url"] {
+    font-size: 14px;
+    padding: 10px;
   }
+}
+.hidden {
+  display: none;
+}
+
+#admin-dashboard {
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin-top: 20px;
+}
+
+.result {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 6px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+input {
+  margin: 5px 0;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
