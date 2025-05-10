@@ -4,43 +4,200 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Newgle</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .title {
+      text-align: center;
+      color: #3367d6;
+    }
+    .filters {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .filter-button {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid #ddd;
+      background-color: #f4f4f4;
+      transition: background-color 0.3s ease;
+    }
+    .filter-button:hover {
+      background-color: #e1e1e1;
+    }
+    .search-box {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .search-box input {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .result {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 10px;
+      background: #f9f9f9;
+    }
+    .result a {
+      color: #3367d6;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .result a:hover {
+      text-decoration: underline;
+    }
+    .no-results {
+      color: red;
+      font-weight: bold;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid #ddd;
+      background-color: #f4f4f4;
+      transition: background-color 0.3s ease;
+      margin: 0 5px;
+    }
+    .pagination button:hover {
+      background-color: #e1e1e1;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
+  <div class="container">
     <h1 class="title">Newgle</h1>
-    <input type="text" id="searchBox" placeholder="Rechercher...">
-    <div id="results"></div>
+    
+    <!-- Barre de recherche -->
+    <div class="search-box">
+      <input type="text" id="searchBox" placeholder="Rechercher..." />
+    </div>
+
+    <!-- Filtre par catégorie -->
+    <div class="filters" id="filters">
+      <button class="filter-button" data-category="HTML5">HTML5</button>
+      <button class="filter-button" data-category="CSS3">CSS3</button>
+      <button class="filter-button" data-category="JavaScript">JavaScript</button>
+      <button class="filter-button" data-category="Python">Python</button>
+      <button class="filter-button" data-category="React">React</button>
+      <button class="filter-button" data-category="Node.js">Node.js</button>
+      <button class="filter-button" data-category="CyberSécurité">CyberSécurité</button>
+      <button class="filter-button" data-category="Réseaux sociaux">Réseaux sociaux</button>
+    </div>
+
+    <div id="results" class="results"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination">
+      <button id="prevPage" disabled>Précédent</button>
+      <button id="nextPage">Suivant</button>
+    </div>
   </div>
-<script async src="https://cse.google.com/cse.js?cx=3783d824f026844e6">
-</script>
-<div class="gcse-search"></div>
+
   <script>
     let data = [];
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let currentPage = 1;
+    const resultsPerPage = 100;
 
-    // Charger les données depuis data.json
-    fetch('resultats.json')
+    // Charger les données depuis le fichier JSON
+    fetch('resultats_pagination.json')
       .then(response => response.json())
-      .then(json => data = json);
+      .then(json => {
+        data = json;
+        filterResults();
+      });
 
+    const filterButtons = document.querySelectorAll('.filter-button');
     const searchBox = document.getElementById('searchBox');
     const resultsDiv = document.getElementById('results');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
 
-    searchBox.addEventListener('input', function () {
-      const query = this.value.toLowerCase();
-      resultsDiv.innerHTML = '';
+    // Ajouter un événement pour chaque bouton de filtre
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        activeCategory = button.getAttribute('data-category');
+        currentPage = 1;  // Réinitialiser à la première page
+        filterResults();
+      });
+    });
 
-      const filtered = data.filter(item => item.title.toLowerCase().includes(query));
-      if (filtered.length === 0 && query !== '') {
-        resultsDiv.innerHTML = `<p class='no-results'>Aucun résultat trouvé pour "${query}"</p>`;
+    // Ajouter un événement pour la barre de recherche
+    searchBox.addEventListener('input', () => {
+      searchQuery = searchBox.value.toLowerCase();
+      currentPage = 1;  // Réinitialiser à la première page
+      filterResults();
+    });
+
+    // Fonction pour filtrer et paginer les résultats
+    function filterResults() {
+      // Filtrer les résultats en fonction de la catégorie et de la recherche
+      const filteredResults = data.filter(item => {
+        const isCategoryMatch = activeCategory === 'all' || item.category === activeCategory;
+        const isSearchMatch = item.title.toLowerCase().includes(searchQuery);
+        return isCategoryMatch && isSearchMatch;
+      });
+
+      // Calculer les résultats à afficher pour la page actuelle
+      const startIndex = (currentPage - 1) * resultsPerPage;
+      const endIndex = startIndex + resultsPerPage;
+      const pageResults = filteredResults.slice(startIndex, endIndex);
+
+      resultsDiv.innerHTML = ''; // Effacer les résultats précédents
+
+      if (pageResults.length === 0) {
+        resultsDiv.innerHTML = `<p class="no-results">Aucun résultat trouvé pour "${searchQuery}" dans "${activeCategory}"</p>`;
       } else {
-        filtered.forEach(item => {
+        pageResults.forEach(item => {
           const result = document.createElement('div');
           result.className = 'result';
           result.innerHTML = `<a href="${item.url}" target="_blank">${item.title}</a><p>${item.url}</p>`;
           resultsDiv.appendChild(result);
         });
       }
+
+      // Mettre à jour les boutons de pagination
+      prevPageButton.disabled = currentPage === 1;
+      nextPageButton.disabled = currentPage * resultsPerPage >= filteredResults.length;
+    }
+
+    // Ajouter des événements pour les boutons de pagination
+    prevPageButton.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        filterResults();
+      }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+      currentPage++;
+      filterResults();
     });
   </script>
 </body>
